@@ -1,0 +1,7 @@
+---
+nomachine::terminalserver::package_ensure: present
+nomachine::terminalserver::package_version: 6.2.4-1
+nomachine::terminalserver::base_package: nomachine-terminal-server
+nomachine::terminalserver::base_path: /usr/NX
+nomachine::terminalserver::service_ensure: running
+nomachine::terminalserver::service_enable: 'true'
