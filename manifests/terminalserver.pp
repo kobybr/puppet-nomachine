@@ -10,7 +10,7 @@ class nomachine::terminalserver (
   String $base_package,
   String $base_path,
   String $service_ensure,
-  String $service_enable,
+  Boolean $service_enable,
   Optional[Hash]   $server_config = {},
   Optional[Hash]   $node_config = {},
   Optional[Array]  $dependancy_packages = [],
