@@ -4,21 +4,34 @@
 #
 # @example
 #   include nomachine::terminalserver::service
-class nomachine::terminalserver::service inherits nomachine::terminalserver {
-
-  $service_ensure = $nomachine::terminalserver::package_ensure ? {
+#
+# @param package_ensure
+#   Current package state.
+#   When set to `absent`, the service will be stopped and disabled.
+#
+# @param service_ensure
+#   Desired state of the NoMachine service.
+#   Common values are `running` or `stopped`.
+#
+# @param service_enable
+#   Whether the NoMachine service should be enabled at boot.
+class nomachine::terminalserver::service (
+  Variant[Enum['present', 'latest', 'absent'], String] $package_ensure = $nomachine::terminalserver::package_ensure,
+  String $service_ensure = $nomachine::terminalserver::service_ensure,
+  Boolean $service_enable = $nomachine::terminalserver::service_enable,
+) {
+  $real_service_ensure = $package_ensure ? {
     'absent' => 'stopped',
-    default  => $nomachine::terminalserver::service_ensure,
+    default  => $service_ensure,
   }
 
-  $service_enable = $nomachine::terminalserver::package_ensure ? {
+  $real_service_enable = $package_ensure ? {
     'absent' => false,
-    default  => $nomachine::terminalserver::service_enable,
+    default  => $service_enable,
   }
 
   service { 'nxserver':
-    ensure => $service_ensure,
-    enable => $service_enable,
+    ensure => $real_service_ensure,
+    enable => $real_service_enable,
   }
-
 }

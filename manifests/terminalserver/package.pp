@@ -4,21 +4,26 @@
 #
 # @example
 #   include nomachine::terminalserver::package
-class nomachine::terminalserver::package inherits nomachine::terminalserver {
+#
+# @param base_package
+#   Name of the NoMachine Terminal Server package.
+#
+# @param dependency_packages
+#   Array of additional packages required before installing NoMachine.
+#
+# @param package_ensure
+#   Desired package state.
+#   Valid values are `present`, `latest`, `absent`, or a specific package version.
+class nomachine::terminalserver::package (
+  String $base_package = $nomachine::terminalserver::base_package,
+  Array[String] $dependency_packages = $nomachine::terminalserver::dependency_packages,
+  Variant[Enum['present', 'latest', 'absent'], String] $package_ensure = $nomachine::terminalserver::package_ensure,
+) {
+  $merged_packages = [
+    $base_package,
+  ] + $dependency_packages
 
-  $merged_packages = concat( [$nomachine::terminalserver::base_package], $nomachine::terminalserver::dependancy_packages )
-
-  if $nomachine::terminalserver::package_ensure == 'present' {
-    $package_ensure = $nomachine::terminalserver::package_version
-    $package_provider = undef
-  } else {
-    if ($::osfamily == 'Suse') {
-      $package_ensure = 'absent'
-    } else {
-      $package_ensure = 'purged'
-    }
+  package { $merged_packages:
+    ensure => $package_ensure,
   }
-
-  ensure_packages( $merged_packages, { ensure => $package_ensure } )
-
 }
