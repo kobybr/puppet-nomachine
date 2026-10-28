@@ -35,9 +35,13 @@ class nomachine::terminalserver::config (
   Optional[String] $server_license_content = $nomachine::terminalserver::server_license_content,
   Optional[String] $node_license_content = $nomachine::terminalserver::node_license_content,
 ) {
+  $file_ensure = ($package_ensure == 'absent') ? {
+    true    => 'absent',
+    default => 'present',
+  }
   if $server_license_content {
     file { "${base_path}/etc/server.lic":
-      ensure  => $package_ensure,
+      ensure  => $file_ensure,
       content => $server_license_content,
       mode    => '0400',
       owner   => 'nx',
@@ -47,7 +51,7 @@ class nomachine::terminalserver::config (
 
   if $node_license_content {
     file { "${base_path}/etc/node.lic":
-      ensure  => $package_ensure,
+      ensure  => $file_ensure,
       content => $node_license_content,
       mode    => '0400',
       owner   => 'root',
